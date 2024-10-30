@@ -31,10 +31,6 @@ jobs:
         run: |
           npm install
           npm run build
-          ls
-          pwd
-          cd ..
-          pwd
         env:
           CI: false
       - name: 📂 Sync folders and files to the server
@@ -45,3 +41,14 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD}}
           port: 21
           server-dir: /sdns-weather/frontend/
+
+
+      - name: 📂 Copy Built Files to Root Directory on Remote
+        uses: SamKirkland/FTP-Deploy-Action@4.3.3
+        with:
+          server: ftp.gizew.com
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          local-dir: /weather/dist
+          server-dir: /sdns-weather/
