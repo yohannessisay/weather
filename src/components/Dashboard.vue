@@ -17,7 +17,7 @@ const successCallback = async (position: GeolocationPosition) => {
   };
 
   try {
-    const res = await fetch(`${baseUrl}/api/weather`, {
+    const res = await fetch(`https://weather-api.gizew.com/api/weather`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
