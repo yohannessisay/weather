@@ -31,6 +31,8 @@ jobs:
         run: |
           npm install
           npm run build
+          ls
+          pwd
         env:
           CI: false
       - name: 📂 Sync folders and files to the server
