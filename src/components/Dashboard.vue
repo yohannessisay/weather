@@ -17,7 +17,7 @@ const successCallback = async (position: GeolocationPosition) => {
   };
 
   try {
-    const res = await fetch(`https://weather-api.gizew.com/api/weather`, {
+    const res = await fetch(`${baseUrl}/api/weather`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -169,7 +169,7 @@ onMounted(async () => {
             </svg>
             UV </span>
           <span>
-            {{ weatherData?.current?.humidity }}
+            {{ weatherData?.current?.uv }}
           </span>
 
 
