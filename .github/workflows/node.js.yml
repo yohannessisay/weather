@@ -50,5 +50,5 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
-          local-dir: /weather/dist
+          local-dir: /weather/dist/
           server-dir: /sdns-weather/
