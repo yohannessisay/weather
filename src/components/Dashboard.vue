@@ -23,8 +23,7 @@ const successCallback = async (position: GeolocationPosition) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(currentPosition)
-    });
-console.log(res);
+    }); 
 
     if (!res.ok) {
       throw new Error('Network response was not ok');
