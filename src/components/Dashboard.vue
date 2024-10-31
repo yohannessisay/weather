@@ -2,8 +2,10 @@
 import { onMounted, ref } from 'vue';
 import Modal from './Modal.vue';
 import MainLogo from "../assets/main.png"
+import Spinner from './Spinner.vue';
 const weatherData = ref<any>(null);
 const permissionModal = ref(false);
+const loading = ref(true);
 const options = {
   enableHighAccuracy: true,
   timeout: 3000,
@@ -23,13 +25,14 @@ const successCallback = async (position: GeolocationPosition) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(currentPosition)
-    }); 
+    });
 
     if (!res.ok) {
       throw new Error('Network response was not ok');
     }
 
     weatherData.value = await res.json();
+    loading.value = false;
   } catch (err) {
     console.log("ERROR ", err);
 
@@ -94,7 +97,7 @@ onMounted(async () => {
 
       <span class=" text-sm mb-1 text-center">The weather today is</span>
 
-      <div class="flex justify-center">
+      <div class="flex justify-center" v-if="!loading">
         <div class="rounded-md border pr-2 pl-1 border-teal-500 flex gap-4">
           <span class="mt-2">{{
             weatherData?.current?.condition?.text || "Unavailable" }}
@@ -103,6 +106,7 @@ onMounted(async () => {
         </div>
 
       </div>
+      <Spinner v-else></Spinner>
       <div class="grid grid-cols-1 mt-8">
         <div class="grid grid-cols-2 gap-4">
 
@@ -118,9 +122,10 @@ onMounted(async () => {
             </svg>
 
             Temperature </span>
-          <span>
+          <span v-if="!loading">
             {{ weatherData?.current?.temp_c }} &deg;C (Feels like {{ weatherData?.current?.feelslike_c }}&deg;C)
           </span>
+          <Spinner :width="'w-6'" :height="'h-6'" v-else></Spinner>
           <span class="flex">
             <svg width="25px" height="25px" class="mr-4" viewBox="0 0 24 24" fill="#ffffff"
               xmlns="http://www.w3.org/2000/svg">
@@ -131,10 +136,10 @@ onMounted(async () => {
                 d="M12 18C11.4747 18 10.9546 17.8965 10.4693 17.6955C9.98396 17.4945 9.54301 17.1999 9.17157 16.8284C8.80014 16.457 8.5055 16.016 8.30448 15.5307C8.10346 15.0454 8 14.5253 8 14"
                 stroke="#222222" stroke-linecap="round" />
             </svg>Humidity </span>
-          <span class="">
+          <span v-if="!loading">
             {{ weatherData?.current?.humidity }}
           </span>
-
+          <Spinner :width="'w-6'" :height="'h-6'" v-else></Spinner>
           <span class="flex">
             <svg width="25px" height="25px" class="mr-4" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <g id="wind" transform="translate(-2 -2)">
@@ -148,11 +153,11 @@ onMounted(async () => {
                   stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
               </g>
             </svg>Wind </span>
-          <span class="">
+          <span v-if="!loading">
             {{ weatherData?.current?.wind_kph }}/kph
           </span>
 
-
+          <Spinner :width="'w-6'" :height="'h-6'" v-else></Spinner>
 
           <span class="flex">
 
@@ -167,10 +172,10 @@ onMounted(async () => {
               </circle>
             </svg>
             UV </span>
-          <span>
+          <span v-if="!loading">
             {{ weatherData?.current?.uv }}
           </span>
-
+          <Spinner :width="'w-6'" :height="'h-6'" v-else></Spinner>
 
 
 
