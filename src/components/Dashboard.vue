@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import Modal from './Modal.vue';
 import MainLogo from "../assets/main.png"
 import Spinner from './Spinner.vue';
@@ -17,16 +17,27 @@ const options = {
   enableHighAccuracy: true,
   timeout: 3000,
 };
+const userName = ref(localStorage.getItem("userName") || "");
+const editableSpan = ref<HTMLSpanElement | null>(null);
+
+
+const updateUserName = () => {
+  if (editableSpan.value) {
+    userName.value = editableSpan.value.innerText;
+    localStorage.setItem("userName", userName.value);
+  }
+}
+
+watch(userName, (newVal) => {
+  localStorage.setItem("userName", newVal);
+});
+
 const successCallback = async (position: GeolocationPosition) => {
   const currentPosition: Position = {
     latitude: position.coords.latitude,
     longitude: position.coords.longitude
   };
   getWeatherData(currentPosition);
-
-
-
-
 };
 
 const continueWithoutPermission = async () => {
@@ -116,10 +127,29 @@ onMounted(async () => {
   </Modal>
   <div class="bg-gray-800 h-screen flex justify-center flex-col items-center text-white">
     <img :src="MainLogo" alt="sdns logo" class="w-32 h-32 border rounded-md rounded-br-none rounded-bl-none ">
-    <div class="border rounded-md p-4 shadow-md flex flex-col justify-center -mt-[1px]">
-      <span class=" text-3xl mb-4 text-center">Welcome, Mr/Mrs-</span>
+    <div class="border-2 border-gray-600 rounded-md p-4 shadow-md flex flex-col justify-center -mt-[1px]">
+      <div class="flex mb-4">
+        <span class=" text-3xl mb-4 text-center mr-4">Welcome, </span>
+        <span class=" text-3xl mb-4 text-center mr-4" contenteditable="true" ref="editableSpan" @input="updateUserName">
+          {{ userName && userName != "" ? userName : "Enter Your Name" }}
+        </span>
+        <div class="relative flex items-center group">
+          <svg class="w-5 h-5 -mt-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
+              clip-rule="evenodd" />
+          </svg>
+          <div class="absolute left-0  items-center hidden ml-6 group-hover:flex w-64">
+            <div class="w-3 h-3 -mr-2 rotate-45 bg-black"></div>
+            <span class="relative z-10 p-2 text-xs leading-none text-white whitespace-no-wrap bg-black shadow-lg">Click
+              the {{ userName && userName != "" ? `"${userName}" text`  : "Enter Your Name Text" }} to edit your name.</span>
+          </div>
+        </div>
 
-      <span class=" text-sm mb-1 text-center">The weather today is</span>
+      </div>
+
+
+      <span class=" text-sm mb-1 mt-8 text-center">The weather today is</span>
 
       <div class="flex justify-center" v-if="!loading">
         <div class="rounded-md border pr-2 pl-1 border-teal-500 flex gap-4">
