@@ -128,7 +128,7 @@ onMounted(async () => {
   <div class="bg-gray-800 h-screen flex justify-center flex-col items-center text-white">
     <img :src="MainLogo" alt="sdns logo" class="w-32 h-32 border rounded-md rounded-br-none rounded-bl-none ">
     <div class="border-2 border-gray-600 rounded-md p-4 shadow-md flex flex-col justify-center -mt-[1px]">
-      <div class="flex mb-4">
+      <div class="flex justify-center mb-4">
         <span class=" text-3xl mb-4 text-center mr-4">Welcome, </span>
         <span class=" text-3xl mb-4 text-center mr-4" contenteditable="true" ref="editableSpan" @input="updateUserName">
           {{ userName && userName != "" ? userName : "Enter Your Name" }}
