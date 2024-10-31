@@ -3,6 +3,13 @@ import { onMounted, ref } from 'vue';
 import Modal from './Modal.vue';
 import MainLogo from "../assets/main.png"
 import Spinner from './Spinner.vue';
+
+
+type Position = {
+  longitude: number,
+  latitude: number
+}
+
 const weatherData = ref<any>(null);
 const permissionModal = ref(false);
 const loading = ref(true);
@@ -11,13 +18,31 @@ const options = {
   timeout: 3000,
 };
 const successCallback = async (position: GeolocationPosition) => {
-
-  const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
-  const currentPosition = {
+  const currentPosition: Position = {
     latitude: position.coords.latitude,
     longitude: position.coords.longitude
   };
+  getWeatherData(currentPosition);
 
+
+
+
+};
+
+const continueWithoutPermission = async () => {
+  await fetch("http://ip-api.com/json/")
+    .then(response => response.json())
+    .then(data => {
+      const currentPosition: Position = { latitude: data.lat, longitude: data.lon };
+      getWeatherData(currentPosition)
+      localStorage.setItem("locationPermissionState", "denied");
+      permissionModal.value = false
+    });
+
+}
+
+
+const getWeatherData = async (currentPosition: Position) => {
   try {
     const res = await fetch(`https://weather-api.gizew.com/api/weather`, {
       method: 'POST',
@@ -37,11 +62,7 @@ const successCallback = async (position: GeolocationPosition) => {
     console.log("ERROR ", err);
 
   }
-
-
-
-};
-
+}
 const errorCallback = (error: GeolocationPositionError) => {
   console.log("HERE AGAIN");
   console.log(error);
@@ -53,8 +74,11 @@ const getData = () => {
 }
 onMounted(async () => {
   const permissionStatus = await navigator.permissions.query({ name: 'geolocation' });
-
-  if (permissionStatus.state !== 'granted') {
+  const localStorageState = localStorage.getItem("locationPermissionState");
+  if (localStorageState === 'denied') {
+    continueWithoutPermission();
+  }
+  else if (permissionStatus.state !== 'granted') {
     permissionModal.value = true
   } else {
     getData();
@@ -66,7 +90,7 @@ onMounted(async () => {
 <template>
   <Modal :isOpen="permissionModal" @close="permissionModal = false">
     <div class="text-white">
-      <p>
+      <p class="p-2 m-2">
         I value your privacy and want to ensure you feel comfortable while using my website. To provide you with a
         more
         personalized experience, I kindly ask for your permission to access your location. Please rest assured that no
@@ -79,7 +103,7 @@ onMounted(async () => {
       </p>
       <div class="flex justify-center mt-8 gap-4">
 
-        <button
+        <button @click="continueWithoutPermission()"
           class="bg-orange-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 hover:shadow-lg transition-all duration-200">
           Continue With Limited Functionality
         </button>

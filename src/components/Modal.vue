@@ -5,9 +5,9 @@
 
         <div class="relative bg-gray-800 border-2 border-white rounded-lg shadow-lg p-6 w-full max-w-md mx-4 z-10 transition-transform transform"
             :class="{ 'scale-100': isOpen, 'scale-95': !isOpen }">
-            <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-700" @click="closeModal">
+            <!-- <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-700" @click="closeModal">
                 &times;
-            </button>
+            </button> -->
             <slot></slot>
         </div>
     </div>
